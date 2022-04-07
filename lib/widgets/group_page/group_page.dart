@@ -41,16 +41,22 @@ class GroupListBody extends StatelessWidget {
   }
 }
 
-class GroupListWidget extends StatelessWidget {
+class GroupListWidget extends StatefulWidget {
   const GroupListWidget({Key? key}) : super(key: key);
 
+  @override
+  State<GroupListWidget> createState() => _GroupListWidgetState();
+}
+
+class _GroupListWidgetState extends State<GroupListWidget> {
   @override
   Widget build(BuildContext context) {
     final groupsCount =
         NotesListProvider.watch(context)?.model.groups.length ?? 0;
+    print("Данные получены");
     return ListView.separated(
       itemBuilder: (BuildContext context, int index) {
-        return GroupItemWidjet();
+        return GroupItemWidjet(indexInList: index);
       },
       itemCount: groupsCount,
       separatorBuilder: (BuildContext context, int index) {
@@ -63,10 +69,13 @@ class GroupListWidget extends StatelessWidget {
 }
 
 class GroupItemWidjet extends StatelessWidget {
-  const GroupItemWidjet({Key? key}) : super(key: key);
-
+  final int indexInList;
+  const GroupItemWidjet({Key? key, required this.indexInList})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final model = NotesListProvider.read(context)!.model;
+    final group = model.groups[indexInList];
     return Slidable(
       // Specify a key if the Slidable is dismissible.
       key: const ValueKey(0),
@@ -83,7 +92,7 @@ class GroupItemWidjet extends StatelessWidget {
             label: 'Edit',
           ),
           SlidableAction(
-            onPressed: (context) => () {},
+            onPressed: (context) => model.deleteGroup(indexInList),
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             icon: Icons.delete,
@@ -91,10 +100,17 @@ class GroupItemWidjet extends StatelessWidget {
           ),
         ],
       ),
-      child: const ColoredBox(
+      child: ColoredBox(
         color: Colors.white,
         child: ListTile(
-          title: Text('Some text'),
+          title: Text(group.title),
+          subtitle: Text(group.description),
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.circle),
+            ],
+          ),
           trailing: Icon(Icons.chevron_right_sharp),
         ),
       ),
