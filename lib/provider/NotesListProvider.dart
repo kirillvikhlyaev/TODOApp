@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:todo_app/models/group.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+
 class NotesListModel extends ChangeNotifier {
   var _groups = <Group>[];
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:todo_app/provider/NotesEditProvider.dart';
 import 'package:todo_app/provider/NotesListProvider.dart';
 
 class GroupPageWidget extends StatefulWidget {
@@ -49,21 +50,26 @@ class GroupListWidget extends StatefulWidget {
 }
 
 class _GroupListWidgetState extends State<GroupListWidget> {
+  final _model = NotesEditModel();
   @override
   Widget build(BuildContext context) {
     final groupsCount =
         NotesListProvider.watch(context)?.model.groups.length ?? 0;
+    
     print("Данные получены");
-    return ListView.separated(
-      itemBuilder: (BuildContext context, int index) {
-        return GroupItemWidjet(indexInList: index);
-      },
-      itemCount: groupsCount,
-      separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(
-          height: 5,
-        );
-      },
+    return NotesEditProvider(
+      model: _model,
+      child: ListView.separated(
+        itemBuilder: (BuildContext context, int index) {
+          return GroupItemWidjet(indexInList: index);
+        },
+        itemCount: groupsCount,
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(
+            height: 5,
+          );
+        },
+      ),
     );
   }
 }
@@ -75,6 +81,7 @@ class GroupItemWidjet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = NotesListProvider.read(context)!.model;
+    final editModel = NotesEditProvider.read(context)!.model;
     final group = model.groups[indexInList];
     return Slidable(
       // Specify a key if the Slidable is dismissible.
@@ -85,18 +92,18 @@ class GroupItemWidjet extends StatelessWidget {
           SlidableAction(
             // An action can be bigger than the others.
             flex: 2,
-            onPressed: (context) => () {},
+            onPressed: (context) => editModel.onEditGroupTap(context, indexInList),
             backgroundColor: Colors.black12,
             foregroundColor: Colors.white,
             icon: Icons.edit,
-            label: 'Edit',
+            label: 'Редактировать',
           ),
           SlidableAction(
             onPressed: (context) => model.deleteGroup(indexInList),
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             icon: Icons.delete,
-            label: 'Delete',
+            label: 'Удалить',
           ),
         ],
       ),
@@ -107,11 +114,11 @@ class GroupItemWidjet extends StatelessWidget {
           subtitle: Text(group.description),
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               Icon(Icons.circle),
             ],
           ),
-          trailing: Icon(Icons.chevron_right_sharp),
+          trailing: const Icon(Icons.chevron_right_sharp),
         ),
       ),
     );

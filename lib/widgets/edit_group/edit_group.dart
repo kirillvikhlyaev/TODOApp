@@ -1,61 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/provider/NotesProvider.dart';
+import 'package:todo_app/provider/NotesEditProvider.dart';
 
-class AddNewGroupWidget extends StatefulWidget {
-  const AddNewGroupWidget({Key? key}) : super(key: key);
+class EditWidget  extends StatefulWidget {
+  const EditWidget ({ Key? key }) : super(key: key);
 
   @override
-  State<AddNewGroupWidget> createState() => _AddNewGroupWidgetState();
+  State<EditWidget> createState() => _EditWidgetState();
 }
 
-class _AddNewGroupWidgetState extends State<AddNewGroupWidget> {
-  final _model = NotesProviderModel();
-  @override
-  Widget build(BuildContext context) {
-    return NotesProvider(model: _model, child: AddNewGroupWidgetBody());
-  }
-}
-
-class AddNewGroupWidgetBody extends StatelessWidget {
-  const AddNewGroupWidgetBody({Key? key}) : super(key: key);
-
+class _EditWidgetState extends State<EditWidget> {
+  final _model = NotesEditModel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Добавить группу'),
         backgroundColor: Colors.indigo,
-        actions: [
-          IconButton(
-              onPressed: () => NotesProvider.read(context)?.model.save(context),
-              icon: const Icon(Icons.done)),
-        ],
+        title: const Text('Редактирование группы'),
+        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.done))],
       ),
-      body: const _GroupFormWidget(),
+      body: NotesEditProvider(model: _model,
+      child: _GroupEditFormWidget(),),
     );
   }
 }
 
-class _GroupFormWidget extends StatefulWidget {
-  const _GroupFormWidget({
+class _GroupEditFormWidget extends StatefulWidget {
+  const _GroupEditFormWidget({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<_GroupFormWidget> createState() => _GroupFormWidgetState();
+  State<_GroupEditFormWidget> createState() => _GroupEditFormWidgetState();
 }
 
-class _GroupFormWidgetState extends State<_GroupFormWidget> {
+class _GroupEditFormWidgetState extends State<_GroupEditFormWidget> {
   String dropDownValue = 'Один';
   @override
   Widget build(BuildContext context) {
-    
+    final titleController = TextEditingController(text: NotesEditProvider.read(context)?.model.title);
+    final descriptionController = TextEditingController(text: NotesEditProvider.read(context)?.model.description);
+  
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
             TextField(
+              controller: titleController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -65,11 +56,12 @@ class _GroupFormWidgetState extends State<_GroupFormWidget> {
                   labelText: 'Название',
                   labelStyle: const TextStyle(color: Colors.grey)),
               autofocus: true,
-              onChanged: (value) =>
-                  NotesProvider.read(context)?.model.title = value,
+              
+              onChanged: (value) => {},
             ),
             const SizedBox(height: 15),
             TextField(
+              controller: descriptionController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -78,8 +70,7 @@ class _GroupFormWidgetState extends State<_GroupFormWidget> {
                       borderRadius: BorderRadius.circular(10)),
                   labelText: 'Описание',
                   labelStyle: const TextStyle(color: Colors.grey)),
-              onChanged: (value) =>
-                  NotesProvider.read(context)?.model.description = value,
+              onChanged: (value) => {},
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -112,4 +103,4 @@ class _GroupFormWidgetState extends State<_GroupFormWidget> {
       ),
     ),);
   }
-}
+  }
